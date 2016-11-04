@@ -3,8 +3,8 @@ import Header from './Header';
 import Order from './Order';
 import Inventory from './Inventory';
 import Fish from './Fish';
-
 import sampleFishes from '../sample-fishes';
+import base from '../base';
 
 class App extends React.Component {
 
@@ -21,6 +21,20 @@ class App extends React.Component {
 			order: {}
 		};
 	}
+
+	componentWillMount() {
+		this.ref = base.syncState(`${this.props.params.storeId}/fishes`,
+			{ 
+				context: this,
+				state: 'fishes'
+			});
+	}
+
+	componentWillUnmount() {
+		base.removeBinding(this.ref);
+	}
+
+
 
 	addFish(fish) {
 		const fishes = {...this.state.fishes};
@@ -57,7 +71,11 @@ class App extends React.Component {
 						}
 					</ul>
 				</div>
-				<Order fishes={this.state.fishes} order={this.state.order}/>
+				<Order 
+					fishes={this.state.fishes} 
+					order={this.state.order}
+					params={this.props.params}
+					/>
 				<Inventory addFish={this.addFish} loadSamples={this.loadSamples} />
 			</div>
 			)
